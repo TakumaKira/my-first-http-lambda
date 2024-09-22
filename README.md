@@ -10,25 +10,32 @@ And modified to run on Docker.
 
 ## Pull the cargo-lambda image
 
-```bash
+```sh
 docker pull ghcr.io/cargo-lambda/cargo-lambda
 ```
 
 ## Run the cargo-lambda container
 
-```bash
+```sh
 docker run --rm -it \
 -v /path/to/your/git/workspace:/app \
 -w /app \
 --network=host \
-ghcr.io/cargo-lambda/cargo-lambda bash
+--name=cargo-lambda \
+ghcr.io/cargo-lambda/cargo-lambda sh
 ```
+
+You can interact with the container from other terminal with the following command:
+
+```sh
+docker exec -it cargo-lambda sh
+``
 
 ## Create a new project with cargo-lambda
 
 From your interactive docker container shell, run the following command:
 
-```bash
+```sh
 cargo lambda new my-first-http-lambda # Answer `Yes` to the question `Is this function an HTTP function?`
 cd my-first-http-lambda
 ```
@@ -37,11 +44,11 @@ Now you can open `/path/to/your/git/workspace/my-first-http-lambda` with your fa
 
 ## Build the project
 
-```bash
+```sh
 cargo lambda build --release
 ```
 
-```bash
+```sh
 AWS_ACCESS_KEY_ID=<YOUR_USERS_AWS_ACCESS_KEY_ID> AWS_SECRET_ACCESS_KEY=<YOUR_USERS_AWS_SECRET_ACCESS_KEY> cargo lambda deploy --enable-function-url --iam-role <YOUR_FULL_IAM_ROLE_ARN_WITH_AWSLambdaBasicExecutionRole>
 # 🔍 function arn: <ARN_OF_YOUR_DEPLOYED_FUNCTION> 🔗 function url: <URL_OF_YOUR_DEPLOYED_FUNCTION>
 ```
@@ -53,7 +60,7 @@ If you add `?name=JohnDoe` to the end of the url, you will see `Hello JohnDoe, t
 
 From your interactive docker container shell used above, run the following command:
 
-```bash
+```sh
 cargo lambda watch
 ```
 
@@ -61,14 +68,14 @@ cargo lambda watch
 
 Inside the container, run the following command:
 
-```bash
+```sh
 cargo lambda invoke --data-example apigw-request
 # {"statusCode":200,"headers":{},"multiValueHeaders":{"content-type":["text/html"]},"body":"Hello me, this is an AWS Lambda HTTP request","isBase64Encoded":false}
 ```
 
 Or,
 
-```bash
+```sh
 curl http://localhost:9000?name=JohnDoe
 # Hello JohnDoe, this is an AWS Lambda HTTP request
 ```
